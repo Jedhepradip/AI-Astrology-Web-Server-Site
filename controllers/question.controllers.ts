@@ -122,7 +122,7 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({
   // apiKey: process.env.GOOGLE_API_KEY as string,
-  apiKey : 'AIzaSyCcy2pxT0jbZu2OHipxdZpe_7AkOYwleAs'
+  apiKey: 'AIzaSyCcy2pxT0jbZu2OHipxdZpe_7AkOYwleAs'
 });
 
 const model = "gemini-2.5-pro";
@@ -183,8 +183,19 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
     // 🪶 Try once
     try {
       const result = await ai.models.generateContent({ model, contents, config });
-      console.log("result :",result);
-      
+
+      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const astrology = JSON.parse(text as string);
+
+      const cleanText = astrology
+        .replace(/\\n/g, " ")
+        .replace(/\n/g, " ")
+        .replace(/\*/g, "")
+        .replace(/�/g, "")
+        .trim();
+
+      console.log("cleanText Prediction:", cleanText);
+
       if (!result) {
         res.status(500).json({ message: "AI returned no text" });
         return;
@@ -194,6 +205,7 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
         message: "AI astrology reading generated successfully",
         prompt,
         aiResponse: result,
+        cleanText: cleanText
       });
 
     } catch (error: any) {
@@ -202,13 +214,24 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const retryResult = await ai.models.generateContent({ model, contents, config });
-        console.log("retryResult :",retryResult);
-        
+
+        const text = retryResult?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const astrology = JSON.parse(text as string);
+
+        const cleanText = astrology
+          .replace(/\\n/g, " ")
+          .replace(/\n/g, " ")
+          .replace(/\*/g, "")
+          .replace(/�/g, "")
+          .trim();
+
+        console.log("cleanText Prediction:", cleanText);
 
         res.status(200).json({
           message: "AI astrology reading generated successfully (after retry)",
           prompt,
           aiResponse: retryResult,
+          cleanText: cleanText
         });
       } else {
         throw error;
