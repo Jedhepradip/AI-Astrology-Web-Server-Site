@@ -225,6 +225,7 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
           .replace(/�/g, "")
           .trim();
 
+          
         console.log("cleanText Prediction:", cleanText);
 
         res.status(200).json({
