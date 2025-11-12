@@ -128,23 +128,42 @@ const ai = new GoogleGenAI({
 const model = "gemini-2.5-pro";
 
 const createAstrologyPrompt = (
-  name: string | undefined,
-  birthDate: Date | undefined,
-  birthTime: string | undefined,
-  birthPlace: string | undefined,
-  userQuestion: string
+  name: string,
+  birthDate: Date,
+  birthTime: string,
+  birthPlace: string,
+  questionText: string,
+  duration: number
 ): string => {
-  return `✨ **AI Astrology Reading for ${name || "User"}** ✨  
-🗓️ **Date of Birth:** ${birthDate || "Unknown"}  
-⏰ **Time of Birth:** ${birthTime || "Unknown"}  
-📍 **Place of Birth:** ${birthPlace || "Unknown"}  
-💭 **User’s Question:** ${userQuestion}  
+  return `
+Generate a beautiful astrology prediction and a matching AI image prompt based on the following user details:
 
-Analyze these details using **Vedic astrology principles** and provide a **detailed, emotional, and spiritual answer**.  
-Include **remedies, planetary insights, and positive guidance**.  
-Format your answer like:  
-🌠 **Astrology Prediction:** <your detailed response>.`;
+Name: ${name}
+Date of Birth: ${birthDate}
+Time of Birth: ${birthTime}
+Place of Birth: ${birthPlace}
+User Question: "${questionText}"
+Duration: ${duration} seconds
+
+Instructions:
+1. Analyze the given birth details astrologically to answer the user's question in a poetic, warm, and spiritually uplifting tone.
+2. The astrology message should be suitable for an audio or video of around ${duration} seconds — concise yet emotionally rich.
+3. Include an imaginative AI Image prompt that visually represents the astrology theme or cosmic energy behind the answer.
+4. Return the result strictly in clean JSON format with these two fields:
+   - "aiAnswerText": (the detailed astrology answer)
+   - "imagePrompt": (the descriptive visual prompt for image generation)
+
+Example Format:
+{
+  "aiAnswerText": "✨ Dear Aarav, your chart glows with the light of Venus, guiding you toward harmony in relationships and creative growth. The next phase brings emotional renewal — follow your heart, for it knows your true path.",
+  "imagePrompt": "a celestial scene with a radiant Venus glowing in a twilight sky, surrounded by soft pastel nebula clouds, dreamy and mystical, 4K"
+}
+
+Keep the tone divine, insightful, and emotionally resonant, as if spoken by a compassionate astrologer.
+`;
 };
+
+
 
 const config = {
   thinkingConfig: {
@@ -168,10 +187,11 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
     const birthDate = new Date("2000-08-15");
     const birthTime = "10:30 AM";
     const birthPlace = "Pune";
+    const duration = 30; // in seconds
     const questionText = 'Will I be successful in business or job'
 
     // 🧠 Create astrology prompt
-    const prompt = createAstrologyPrompt(name, birthDate, birthTime, birthPlace, questionText);
+    const prompt = createAstrologyPrompt(name, birthDate, birthTime, birthPlace, questionText,duration);
 
     const contents = [
       {
@@ -224,7 +244,7 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
           .replace(/\*/g, "")
           .replace(/�/g, "")
           .trim();
-          
+
         console.log("cleanText Prediction:", cleanText);
 
         res.status(200).json({
