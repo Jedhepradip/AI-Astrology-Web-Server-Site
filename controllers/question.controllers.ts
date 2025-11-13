@@ -182,6 +182,7 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
     //   return;
     // }
 
+    
     // 🪄 Create dynamic dummy data (you can replace this with real user data)
     const name = "Aarav";
     const birthDate = new Date("2000-08-15");
