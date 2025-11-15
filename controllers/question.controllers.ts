@@ -18,7 +18,7 @@ const createAstrologyPrompt = (
   duration: number
 ): string => {
   return `
-Generate a beautiful astrology prediction and a matching AI image prompt based on:
+Generate a beautiful astrology prediction prompt based on:
 
 Name: ${name}
 Date of Birth: ${birthDate}
