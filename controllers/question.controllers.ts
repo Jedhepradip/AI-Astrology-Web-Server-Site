@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { GoogleGenAI } from "@google/genai";
 
-const GOOGLE_API_KEY="AIzaSyBWKUAO13xU5NSEm4BM6FgOykMsuUw68gQ";
+const GOOGLE_API_KEY = "AIzaSyBWKUAO13xU5NSEm4BM6FgOykMsuUw68gQ";
 
 const ai = new GoogleGenAI({
   apiKey: GOOGLE_API_KEY,
@@ -15,7 +15,6 @@ const createAstrologyPrompt = (
   birthTime: string,
   birthPlace: string,
   questionText: string,
-  duration: number
 ): string => {
   return `
 Generate a beautiful astrology prediction prompt based on:
@@ -25,7 +24,6 @@ Date of Birth: ${birthDate}
 Time of Birth: ${birthTime}
 Place of Birth: ${birthPlace}
 User Question: "${questionText}"
-Duration: ${duration}
 
 Return ONLY clean JSON:
 {
@@ -41,8 +39,7 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
     const birthDate = new Date("2000-08-15");
     const birthTime = "10:30 AM";
     const birthPlace = "Pune";
-    const duration = 30;
-    const questionText = "Will I be successful in business or job?";
+    const questionText = 'What does my future hold in terms of career and relationships?';
 
     const prompt = createAstrologyPrompt(
       name,
@@ -50,7 +47,6 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
       birthTime,
       birthPlace,
       questionText,
-      duration
     );
 
     const contents = [
@@ -85,16 +81,16 @@ export const getQuestions = async (req: Request, res: Response): Promise<void> =
 
     const parsed = JSON.parse(jsonText);
 
-    console.log("Parsed :",parsed);
-    
-     res.status(200).json({
+    console.log("Parsed :", parsed);
+
+    res.status(200).json({
       message: "AI astrology reading generated successfully",
       prompt,
       data: parsed,
     });
   } catch (err: any) {
     console.error(err);
-     res.status(500).json({
+    res.status(500).json({
       message: "Failed to generate astrology reading",
       error: err.message || err,
     });
