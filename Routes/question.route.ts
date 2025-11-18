@@ -6,3 +6,4 @@ const route = expres.Router();
 route.get("/",getQuestions)
 
 export default route;
+
